@@ -15,20 +15,14 @@ class App extends React.Component {
     }
   }
 
-  updateTitle(e){
+  updateField = field => e =>{
     this.setState({
-      title: e.target.value 
+      [field]: e.target.value 
     });
-    console.log(this.state)
-  }
-  updateDescription(e){
-    this.setState({
-      description: e.target.value 
-    });
-    console.log(this.state)
-  }
-
+  };
+  
   render(){
+    console.log(this.state);
     return (
     <React.Fragment>
       <Typography align="center" variant="h2" gutterBottom>
@@ -37,10 +31,10 @@ class App extends React.Component {
       <Grid container justify="center" variant="h2" spacing={2}>
         <Grid item xs={8}>
           <Grid item xs={12}>
-            <TextField type="text" placeholder="Title for this note..." margin="normal" fullWidth onChange={(e) => {this.updateTitle(e)} }/>
+            <TextField name="title" type="text" placeholder="Title for this note..." margin="normal" fullWidth onChange={this.updateField('title')} value={this.state.title}/>
           </Grid>
           <Grid item xs={12}>
-            <TextField placeholder="Description for this note..." margin="normal" multiline rows="4" fullWidth  onChange={(e) => { this.updateDescription(e) } }/>
+            <TextField name="description" placeholder="Description for this note..." margin="normal" multiline rows="4" fullWidth  onChange={this.updateField('description')} value={this.state.description}/>
           </Grid>
           <Fab color="secondary">
             <Icon>edit_icon</Icon>
