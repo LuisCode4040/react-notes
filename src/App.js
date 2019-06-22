@@ -1,9 +1,15 @@
 import React from 'react';
 import Typography  from '@material-ui/core/Typography'; 
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
 import Fab from '@material-ui/core/Fab';
-import Icon from '@material-ui/core/Icon';
+import AddIcon from '@material-ui/icons/Add';
+
+import { Link, Route } from 'react-router-dom'
+
+import NotesForm from './NotesForm';
+import NotesList from './NotesList';
+import Home from './Home';
+import Note from './Note';
 
 class App extends React.Component {
   constructor(props){
@@ -20,6 +26,31 @@ class App extends React.Component {
       [field]: e.target.value 
     });
   };
+
+  saveNote = () => {
+    if(this.state.title && this.state.description){
+      this.setState({
+        notes : [...this.state.notes, {
+          id: Date.now(),
+          title: this.state.title,
+          description: this.state.description}],
+        title : '',
+        description: ''
+      });
+    }
+  }
+
+  deleteNote = index => {
+    this.setState({
+      notes: this.state.notes.filter( (_, i) => index !== i)
+    });
+  };
+
+  toggleCompleted = index => {
+    const notes = this.state.notes;
+    notes[index].completed = !notes[index].completed;
+    this.setState({notes});
+  }
   
   render(){
     console.log(this.state);
@@ -29,18 +60,21 @@ class App extends React.Component {
         My Notes
       </Typography>
       <Grid container justify="center" variant="h2" spacing={2}>
+        <Grid item xs={4}>
+          <NotesList notes={this.state.notes} toggleCompleted={this.toggleCompleted} deleteNote={this.deleteNote} />
+        </Grid>
         <Grid item xs={8}>
-          <Grid item xs={12}>
-            <TextField name="title" type="text" placeholder="Title for this note..." margin="normal" fullWidth onChange={this.updateField('title')} value={this.state.title}/>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField name="description" placeholder="Description for this note..." margin="normal" multiline rows="4" fullWidth  onChange={this.updateField('description')} value={this.state.description}/>
-          </Grid>
-          <Fab color="secondary">
-            <Icon>edit_icon</Icon>
-          </Fab>
+          {/* <NotesForm title={this.state.title} description={this.state.description} updateField={this.updateField} saveNote={this.saveNote}/> */}
+          <Route exact path="/" component={Home} />
+          <Route path="/new" render={() => (
+            <NotesForm title={this.state.title} description={this.state.description} updateField={this.updateField} saveNote={this.saveNote}/>
+          )} />
+          <Route path="/view/:id" render={props => <Note {...props} notes={this.state.notes} /> } />
         </Grid>
       </Grid>
+      <Fab color="primary" component={Link} to="/new">
+        <AddIcon/>
+      </Fab>
     </React.Fragment>
     );
   }
