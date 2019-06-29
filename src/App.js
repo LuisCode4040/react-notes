@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 
-import { Link, Route } from 'react-router-dom'
+import { Link, Route, Redirect } from 'react-router-dom'
 
 import NotesForm from './NotesForm';
 import NotesList from './NotesList';
@@ -40,9 +40,9 @@ class App extends React.Component {
     }
   }
 
-  deleteNote = index => {
+  deleteNote = id => {
     this.setState({
-      notes: this.state.notes.filter( (_, i) => index !== i)
+      notes: this.state.notes.filter( note => id !== note.id )
     });
   };
 
@@ -50,6 +50,10 @@ class App extends React.Component {
     const notes = this.state.notes;
     notes[index].completed = !notes[index].completed;
     this.setState({notes});
+  }
+
+  filterNote = id => {
+    return this.state.notes.filter(note => note.id === parseInt(id))[0];
   }
   
   render(){
@@ -61,7 +65,7 @@ class App extends React.Component {
       </Typography>
       <Grid container justify="center" variant="h2" spacing={2}>
         <Grid item xs={4}>
-          <NotesList notes={this.state.notes} toggleCompleted={this.toggleCompleted} deleteNote={this.deleteNote} />
+          <NotesList notes={this.state.notes} toggleCompleted={this.toggleCompleted} deleteNote={this.deleteNote}/>
         </Grid>
         <Grid item xs={8}>
           {/* <NotesForm title={this.state.title} description={this.state.description} updateField={this.updateField} saveNote={this.saveNote}/> */}
@@ -69,7 +73,16 @@ class App extends React.Component {
           <Route path="/new" render={() => (
             <NotesForm title={this.state.title} description={this.state.description} updateField={this.updateField} saveNote={this.saveNote}/>
           )} />
-          <Route path="/view/:id" render={props => <Note {...props} notes={this.state.notes} /> } />
+          
+          <Route path="/view/:id" render={props => { 
+            const note = this.filterNote(props.match.params.id);
+            return note ?
+            <Note note={note} />
+            :
+            <Redirect to="/"/>
+          } } />
+          
+          
         </Grid>
       </Grid>
       <Fab color="primary" component={Link} to="/new">

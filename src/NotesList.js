@@ -16,7 +16,7 @@ const NotesList = ({ notes, toggleCompleted, deleteNote }) => {
             <ListItem dense button key={index} onClick={()=>{toggleCompleted(index)}} component={Link} to={`/view/${note.id}`}>
                 <ListItemText primary={note.title}/>
                 <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="Trash" onClick={() => {deleteNote(index)}}>
+                    <IconButton edge="end" aria-label="Trash" onClick={() => {deleteNote(note.id)}}>
                     <DeleteIcon />
                     </IconButton>
                 </ListItemSecondaryAction>
